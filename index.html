@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151a24">
+<title>♟ CHESS — 플레이 · 분석 · 복기 · 퍼즐</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div><div class="brand">♟ CHESS</div><div class="sub">Play → Analyze → Review → Puzzle → Learn</div></div>
+  <div class="top-actions"><button id="analysisToggle" class="analysis-toggle on">● 분석 ON</button><button id="newBtn" class="primary">새 게임</button></div>
+</header>
+<nav class="tabs" id="tabs">
+  <button data-view="game" class="active">게임</button><button data-view="analysis">분석</button><button data-view="puzzle">퍼즐</button><button data-view="study">학습</button><button data-view="history">기록</button><button data-view="stats">통계</button><button data-view="settings">설정</button>
+</nav>
+
+<section id="game" class="view active">
+<div class="game-grid">
+<div class="panel">
+  <div class="board-wrap"><div id="board" class="board"></div></div>
+  <div class="status"><div id="statusMain" class="status-main">백의 차례</div><div id="evalPill" class="eval-pill">+0.00</div></div>
+  <div class="toolbar"><button id="undoBtn">↩ 되돌리기</button><button id="retryBtn">⚠ 실수 다시 풀기</button><button id="hintBtn">💡 힌트</button><button id="bestBtn">정답 보기</button></div>
+</div>
+<div class="panel">
+  <div class="section-title">수 기록</div><div id="moveList" class="moves"></div>
+  <hr style="border-color:var(--line);border-width:1px 0 0;margin:14px 0">
+  <div class="section-title">게임 정보</div>
+  <div class="cols"><div class="stat"><div class="k">모드</div><div id="modeStat" class="v">사람 vs AI</div></div><div class="stat"><div class="k">엔진</div><div id="aiStat" class="v">Stockfish 19</div></div></div>
+  <div style="height:10px"></div>
+  <div id="reviewBox" class="insight">수마다 엔진이 평가합니다. 큰 실수는 바로 정답을 숨기고 다시 생각할 수 있게 합니다.</div>
+</div>
+</div>
+</section>
+
+<section id="analysis" class="view">
+<div class="game-grid">
+<div class="panel"><div class="section-title">평가 그래프</div><canvas id="graph" class="graph"></canvas><div class="toolbar"><button id="prevBtn">◀ 이전</button><button id="nextBtn">다음 ▶</button><button id="candidateBtn">후보 수 표시</button></div><div style="height:10px"></div><div id="candidateBox" class="notice">분석 모드에서 후보 수를 계산할 수 있습니다.</div><div style="height:10px"></div><div id="pvBox" class="notice">주요 변형(PV)이 여기에 표시됩니다.</div></div>
+<div class="panel"><div class="section-title">자동 분석</div><div id="analysisSummary" class="cards"></div><div style="height:10px"></div><div id="reviewList" class="list"></div></div>
+</div>
+</section>
+
+<section id="puzzle" class="view">
+<div class="game-grid">
+<div class="panel"><div class="board-wrap"><div id="puzzleBoard" class="board"></div></div><div class="status"><div id="puzzleStatus" class="status-main">이 위치에서 가장 좋은 수를 찾으세요.</div><div id="puzzleRating" class="eval-pill">Puzzle 1200</div></div><div class="toolbar"><button id="puzzleHint">💡 힌트</button><button id="puzzleReset">↻ 다시</button><button id="puzzleAnswer">정답 보기</button><button id="nextPuzzle" class="primary">다음 퍼즐</button></div></div>
+<div class="panel"><div class="section-title">전술 퍼즐</div><div class="notice">정답을 바로 보여주지 않습니다. 먼저 직접 수를 찾고, 필요할 때 단계별 힌트를 사용하세요.</div><div style="height:10px"></div><div id="puzzleExplanation" class="insight">힌트 1: 상대 킹의 안전과 강제 수를 살펴보세요.</div><div style="height:10px"></div><div class="cards"><div class="card"><div class="muted small">현재 연속</div><div id="streak" class="big">🔥 0</div></div><div class="card"><div class="muted small">최고 기록</div><div id="bestStreak" class="big">14</div></div></div></div>
+</div>
+</section>
+
+<section id="study" class="view">
+<div class="cards">
+<div class="card"><div class="badge">오늘의 목표</div><h3>학습 루틴</h3><div class="list"><label><input type="checkbox" id="goalPuzzle"> 퍼즐 5개</label><label><input type="checkbox" id="goalGame"> 게임 1판</label><label><input type="checkbox" id="goalReview"> 실수 3개 복기</label><label><input type="checkbox" id="goalOpening"> 오프닝 10수</label></div></div>
+<div class="card"><div class="badge">오프닝 트레이너</div><h3>스페인 게임</h3><div class="muted">1.e4 e5 2.Nf3 Nc6 3.Bb5</div><div style="height:8px"></div><button onclick="alert('오프닝 트레이너 확장은 다음 데이터팩에서 활성화할 수 있습니다.')">연습 시작</button></div>
+<div class="card"><div class="badge">엔드게임 트레이너</div><h3>퀸 vs 킹</h3><div class="muted">킹을 모서리로 몰아 체크메이트를 완성하세요.</div><div style="height:8px"></div><button onclick="loadEndgame()">연습 시작</button></div>
+</div>
+<div style="height:12px"></div><div class="panel"><div class="section-title">나의 실수 패턴</div><div id="weaknesses" class="list"></div></div>
+</section>
+
+<section id="history" class="view"><div class="panel"><div class="section-title">내 게임</div><div id="historyList" class="list"></div><div class="footer-note">Stockfish 19 · 분석 깊이는 직접 선택 · 게임/복기 데이터는 브라우저에 저장됩니다.</div></div></section>
+
+<section id="stats" class="view"><div class="cards" id="statsCards"></div><div style="height:12px"></div><div class="panel"><div class="section-title">학습 영역</div><div id="learningBars"></div></div></section>
+
+<section id="settings" class="view"><div class="panel"><div class="section-title">게임 설정</div><div class="settings">
+<div class="field"><label>게임 모드</label><select id="mode"><option value="ai">사람 vs AI</option><option value="pvp">사람 vs 사람</option><option value="aiai">AI vs AI</option></select></div>
+<div class="field"><label>내 색</label><select id="humanColor"><option value="w">백</option><option value="b">흑</option><option value="r">랜덤</option></select></div>
+<div class="field"><label>Stockfish 분석 깊이</label><select id="depth"><option value="16">Depth 16 · 빠름</option><option value="20">Depth 20</option><option value="22" selected>Depth 22 · 추천</option><option value="24">Depth 24</option><option value="28">Depth 28</option><option value="32">Depth 32</option><option value="40">Depth 40 · 매우 강함</option><option value="50">Depth 50 · 초고강도</option><option value="60">Depth 60 · 최대</option></select></div>
+<div class="field"><label>생각 시간(ms)</label><input id="thinkTime" type="number" min="500" max="15000" step="500" value="3000"></div>
+<div class="field"><label>체스판 방향</label><select id="orientation"><option value="normal">기본</option><option value="flip">뒤집기</option></select></div>
+<div class="field"><label>마지막 수 표시</label><select id="lastMove"><option value="on">켜기</option><option value="off">끄기</option></select></div>
+<div class="field"><label>이동 표시</label><select id="showTargets"><option value="on">켜기</option><option value="off">끄기</option></select></div>
+<div class="field"><label>자동 분석</label><select id="autoAnalyze"><option value="on">켜기</option><option value="off">끄기</option></select></div>
+</div><div class="toolbar"><button id="applySettings" class="primary">설정 적용 후 새 게임</button><button id="clearData" class="danger">저장 데이터 초기화</button></div></div></section>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
+let reviewJob=0,reviewIndex=-1;
