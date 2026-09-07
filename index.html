@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>♟ CHESS — 플레이 · 분석 · 오프닝 도감</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div><div class="brand">♟ CHESS</div><div class="sub">Play → Analyze → Openings → History</div></div>
+  <div class="top-actions"><button id="analysisToggle" class="analysis-toggle on">● 분석 ON</button><button id="newBtn" class="primary">새 게임</button></div>
+</header>
+<nav class="tabs" id="tabs">
+  <button data-view="game" class="active">게임</button>
+  <button data-view="analysis">분석</button>
+  <button data-view="openings">오프닝 도감</button>
+  <button data-view="history">기록</button>
+  <button data-view="stats">통계</button>
+  <button data-view="settings">설정</button>
+</nav>
+
+<section id="game" class="view active">
+<div class="game-grid">
+<div class="panel">
+  <div class="quick-mode">
+    <label>게임 모드</label>
+    <select id="quickMode"><option value="ai">사람 vs AI</option><option value="pvp">사람 vs 사람</option><option value="aiai">AI vs AI</option></select>
+  </div>
+  <div class="board-wrap"><div id="board" class="board"></div></div>
+  <div class="status"><div id="statusMain" class="status-main">백의 차례</div><div id="evalPill" class="eval-pill">+0.00</div></div>
+  <div class="toolbar"><button id="undoBtn">↩ 되돌리기</button><button id="hintBtn">💡 힌트</button><button id="bestBtn">최선의 수</button></div>
+</div>
+<div class="panel">
+  <div class="section-title">수 기록</div><div id="moveList" class="moves"></div>
+  <hr style="border-color:var(--line);border-width:1px 0 0;margin:14px 0">
+  <div class="section-title">게임 정보</div>
+  <div class="cols"><div class="stat"><div class="k">모드</div><div id="modeStat" class="v">사람 vs AI</div></div><div class="stat"><div class="k">AI</div><div id="aiStat" class="v">준비 중</div></div></div>
+  <div style="height:10px"></div>
+  <div id="engineStatus" class="notice">엔진을 준비하고 있습니다…</div>
+  <div style="height:10px"></div>
+  <div id="reviewBox" class="insight">수마다 분석할 수 있습니다. 큰 실수는 별도로 표시합니다.</div>
+</div>
+</div>
+</section>
+
+<section id="analysis" class="view">
+<div class="game-grid">
+<div class="panel"><div class="section-title">평가 그래프</div><canvas id="graph" class="graph"></canvas><div class="toolbar"><button id="prevBtn">◀ 이전 수</button><button id="nextBtn">다음 수 ▶</button><button id="candidateBtn">후보 수</button></div><div style="height:10px"></div><div id="candidateBox" class="notice">수 기록을 선택하면 후보 수를 보여줍니다.</div><div style="height:10px"></div><div id="pvBox" class="notice">주요 변형(PV)이 여기에 표시됩니다.</div></div>
+<div class="panel"><div class="section-title">자동 분석</div><div id="analysisSummary" class="cards"></div><div style="height:10px"></div><div id="reviewList" class="list"></div></div>
+</div>
+</section>
+
+<section id="openings" class="view">
+<div class="panel">
+  <div class="opening-head"><div><div class="section-title">오프닝 도감</div><div class="muted small">오프닝 이름, ECO, 기본 수순과 핵심 아이디어를 검색할 수 있습니다.</div></div><input id="openingSearch" class="opening-search" placeholder="예: 시실리안, 프렌치, e4, E20…"></div>
+  <div id="openingFilters" class="opening-filters"></div>
+  <div id="openingList" class="opening-grid"></div>
+</div>
+</section>
+
+<section id="history" class="view"><div class="panel"><div class="section-title">내 게임</div><div id="historyList" class="list"></div><div class="footer-note">Stockfish 19 · 깊이로 AI 강도를 결정 · 게임 데이터는 브라우저에 저장됩니다.</div></div></section>
+
+<section id="stats" class="view"><div class="cards" id="statsCards"></div><div style="height:12px"></div><div class="panel"><div class="section-title">실력 지표</div><div id="learningBars"></div></div></section>
+
+<section id="settings" class="view"><div class="panel"><div class="section-title">게임 설정</div><div class="settings">
+<div class="field"><label>게임 모드</label><select id="mode"><option value="ai">사람 vs AI</option><option value="pvp">사람 vs 사람</option><option value="aiai">AI vs AI</option></select></div>
+<div class="field"><label>내 색</label><select id="humanColor"><option value="w">백</option><option value="b">흑</option><option value="r">랜덤</option></select></div>
+<div class="field"><label>Stockfish 탐색 깊이</label><select id="depth"><option value="10">Depth 10 · 입문</option><option value="14">Depth 14 · 초급</option><option value="18">Depth 18 · 중급</option><option value="22" selected>Depth 22 · 강함</option><option value="26">Depth 26 · 매우 강함</option><option value="30">Depth 30 · 고강도</option><option value="35">Depth 35 · 극강</option><option value="40">Depth 40 · 최상급</option><option value="50">Depth 50 · 초고강도</option></select></div>
+<div class="field"><label>생각 시간(ms)</label><input id="thinkTime" type="number" min="500" max="15000" step="500" value="3000"></div>
+<div class="field"><label>체스판 방향</label><select id="orientation"><option value="normal">기본</option><option value="flip">뒤집기</option></select></div>
+<div class="field"><label>마지막 수 표시</label><select id="lastMove"><option value="on">켜기</option><option value="off">끄기</option></select></div>
+<div class="field"><label>이동 표시</label><select id="showTargets"><option value="on">켜기</option><option value="off">끄기</option></select></div>
+<div class="field"><label>자동 분석</label><select id="autoAnalyze"><option value="on">켜기</option><option value="off">끄기</option></select></div>
+</div><div class="depth-note" id="depthNote">Depth 22 · 강함</div><div class="toolbar"><button id="applySettings" class="primary">설정 적용 후 새 게임</button><button id="clearData" class="danger">저장 데이터 초기화</button></div></div></section>
+</div>
+<script src="app.js" defer></script>
+</body>
+</html>
